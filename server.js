@@ -68,7 +68,7 @@ app.use((req, res) => {
 storeService.initialize()
   .then(() => {
     app.listen(HTTP_PORT, () => {
-      console.log("Express http server listening on port " + HTTP_PORT);
+      console.log("Express http server listening on port " + HTTP_PORT);// Log console if it succeeds
     });
   })
   .catch((error) => {
