@@ -11,7 +11,6 @@
 
 const express = require("express"); // Import the express module
 const app = express(); // Create a new express application
-const port = 3000
 const path = require("path"); // Import the path module
 const storeService = require("./store-service"); // Import the store-service module
 const multer = require("multer");
@@ -31,7 +30,6 @@ cloudinary.config({
 
 app.get('/', (req, res) => res.json({ message: 'Hello World!' }))
 
-app.listen(port, () => console.log(`This is the beginning of the Node File Upload App`))
 
 app.use(express.static('public')); // Serve static files from the "public" directory
 
@@ -55,14 +53,36 @@ app.get('/shop', (req, res) => {
   });
   
   app.get('/items', (req, res) => {
-    storeService.getAllItems()
-      .then((allItems) => {
-        res.json(allItems); // Send JSON response containing all items
-      })
-      .catch((error) => {
-        res.status(500).json({ error: "Internal Server Error" }); // Send JSON response with error message
-      });
+    const category = req.query.category;
+    const minDate = req.query.minDate;
+  
+    if (category) {
+      storeService.getItemsByCategory(category)
+        .then((itemsByCategory) => {
+          res.json(itemsByCategory); // Send JSON response containing items filtered by category
+        })
+        .catch((error) => {
+          res.status(500).json({ error: "Internal Server Error" }); // Send JSON response with error message
+        });
+    } else if (minDate) {
+      storeService.getItemsByMinDate(minDate)
+        .then((itemsByMinDate) => {
+          res.json(itemsByMinDate); // Send JSON response containing items filtered by minimum date
+        })
+        .catch((error) => {
+          res.status(500).json({ error: "Internal Server Error" }); // Send JSON response with error message
+        });
+    } else {
+      storeService.getAllItems()
+        .then((allItems) => {
+          res.json(allItems); // Send JSON response containing all items
+        })
+        .catch((error) => {
+          res.status(500).json({ error: "Internal Server Error" }); // Send JSON response with error message
+        });
+    }
   });
+  
   
   app.get('/categories', (req, res) => {
     storeService.getCategories()
@@ -77,58 +97,78 @@ app.get('/shop', (req, res) => {
   app.get('/items/add', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'addItem.html'));
   });
+
+  app.get('/item/:id', (req, res) => {
+    const itemId = req.params.id;
   
+    storeService.getItemById(itemId)
+      .then((item) => {
+        if (item) {
+          res.json(item); // Send JSON response containing the item
+        } else {
+          res.status(404).json({ error: "Item not found" }); // Send JSON response if item is not found
+        }
+      })
+      .catch((error) => {
+        res.status(500).json({ error: "Internal Server Error" }); // Send JSON response with error message
+      });
+  });
+  
+  app.post('/items/add', upload.single('featureImage'), (req, res) => {
+    if (req.file) {
+      let streamUpload = (req) => {
+        return new Promise((resolve, reject) => {
+          let stream = cloudinary.uploader.upload_stream((error, result) => {
+            if (result) {
+              resolve(result);
+            } else {
+              reject(error);
+            }
+          });
+  
+          streamifier.createReadStream(req.file.buffer).pipe(stream);
+        });
+      };
+  
+      async function upload(req) {
+        let result = await streamUpload(req);
+        console.log(result);
+        return result;
+      }
+  
+      upload(req)
+        .then((uploaded) => {
+          processItem(uploaded.url);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    } else {
+      processItem('');
+    }
+  
+    function processItem(imageUrl) {
+      req.body.featureImage = imageUrl;
+  
+      // Process the req.body and add it as a new item in your database
+      const newItem = req.body;
+      // Add the new item to your database or perform other operations
+      storeService.addItem(newItem)
+        .then(() => {
+          res.redirect('/items'); // Redirect to /items after adding the item
+        })
+        .catch((error) => {
+          console.error(error);
+          res.status(500).json({ error: "Internal Server Error" }); // Send JSON response with error message
+        });
+    }
+  });
 
 app.use((req, res) => {
   res.status(404).send("Page Not Found"); // Send a 404 response for unknown routes
 });
 
-app.post('/items/add', upload.single('featureImage'), (req, res) => {
-  if (req.file) {
-    let streamUpload = (req) => {
-      return new Promise((resolve, reject) => {
-        let stream = cloudinary.uploader.upload_stream((error, result) => {
-          if (result) {
-            resolve(result);
-          } else {
-            reject(error);
-          }
-        });
 
-        streamifier.createReadStream(req.file.buffer).pipe(stream);
-      });
-    };
-
-    async function upload(req) {
-      let result = await streamUpload(req);
-      console.log(result);
-      return result;
-    }
-
-    upload(req)
-      .then((uploaded) => {
-        processItem(uploaded.url);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  } else {
-    processItem('');
-  }
-
-  function processItem(imageUrl) {
-    req.body.featureImage = imageUrl;
-
-    // TODO: Process the req.body and add it as a new Item before redirecting to /items
-
-    // Example: 
-    // const newItem = req.body;
-    // // Add the new item to your database or perform other operations
-    // // ...
-    // // Redirect to /items
-    // res.redirect('/items');
-  }
-});
 
 
 storeService.initialize()
