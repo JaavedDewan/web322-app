@@ -32,7 +32,7 @@ cloudinary.config({
 app.use(express.static('public')); // Serve static files from the "public" directory
 
 app.get('/', (req, res) => {
-  res.redirect('/items/add'); // Redirect the root URL to the /about route
+  res.redirect('/about'); // Redirect the root URL to the /about route
 });
 
 app.get('/about', (req, res) => {
@@ -110,7 +110,7 @@ app.get('/shop', (req, res) => {
   });
 
   app.get('/items/add', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'addItem.html'));
+    res.sendFile(path.join(__dirname, 'views', 'additem.html'));
   });
   
   app.post('/items/add', upload.single('featureImage'), (req, res) => {
