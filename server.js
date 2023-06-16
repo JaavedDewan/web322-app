@@ -39,9 +39,7 @@ app.get('/about', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'about.html')); // Send the about.html file as the response
 });
 
-app.get('/items/add', (req, res) => {
-  res.sendFile(path.join(__dirname + "/views/addItem.html"));
-});
+
 
 app.get('/shop', (req, res) => {
     storeService.getPublishedItems()
@@ -109,6 +107,10 @@ app.get('/shop', (req, res) => {
       .catch((error) => {
         res.status(500).json({ error: "Internal Server Error" }); // Send JSON response with error message
       });
+  });
+
+  app.get('/items/add', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'addItem.html'));
   });
   
   app.post('/items/add', upload.single('featureImage'), (req, res) => {
