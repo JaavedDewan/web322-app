@@ -70,57 +70,67 @@ function getCategories() {
 
 function getItemsByCategory(category) {
   return new Promise((resolve, reject) => {
+    // Filter the items based on the specified category
     const filteredItems = items.filter((item) => item.category === category);
+    
+    // If no items match the category, reject the promise with an error message
     if (filteredItems.length === 0) {
       reject("No results returned");
       return;
     }
+    
+    // Resolve the promise with the filtered items
     resolve(filteredItems);
   });
 }
 
 function getItemsByMinDate(minDateStr) {
   return new Promise((resolve, reject) => {
+    // Parse the minimum date string into a Date object
     const minDate = new Date(minDateStr);
 
-    const filteredItems = items.filter(
-      (item) => new Date(item.postDate) >= minDate
-    );
+    // Filter the items based on the minimum date
+    const filteredItems = items.filter((item) => new Date(item.postDate) >= minDate);
 
+    // If no items match the minimum date, reject the promise with an error message
     if (filteredItems.length === 0) {
       reject("No results returned");
       return;
     }
 
+    // Resolve the promise with the filtered items
     resolve(filteredItems);
   });
 }
 
 function getItemById(id) {
   return new Promise((resolve, reject) => {
+    // Find the item with the specified ID
     const item = items.find((item) => item.id === id);
 
+    // If no item matches the ID, reject the promise with an error message
     if (!item) {
       reject("No result returned");
       return;
     }
 
+    // Resolve the promise with the found item
     resolve(item);
   });
 }
 
-
 function addItem(itemData) {
   return new Promise((resolve, reject) => {
-    if (itemData.published === undefined) {
-      itemData.published = false;
-    } else {
-      itemData.published = true;
-    }
+    // Set the 'published' property based on the provided data
+    itemData.published = itemData.published === undefined ? false : true;
 
+    // Assign a unique ID to the item
     itemData.id = items.length + 1;
+
+    // Add the item to the 'items' array
     items.push(itemData);
 
+    // Resolve the promise with the added item
     resolve(itemData);
   });
 }
