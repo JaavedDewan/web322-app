@@ -11,6 +11,7 @@
 
 const express = require("express"); // Import the express module
 const app = express(); // Create a new express application
+const port = 3000
 const path = require("path"); // Import the path module
 const storeService = require("./store-service"); // Import the store-service module
 const multer = require("multer");
@@ -28,6 +29,9 @@ cloudinary.config({
   secure: true
 });
 
+app.get('/', (req, res) => res.json({ message: 'Hello World!' }))
+
+app.listen(port, () => console.log(`This is the beginning of the Node File Upload App`))
 
 app.use(express.static('public')); // Serve static files from the "public" directory
 
@@ -112,18 +116,18 @@ app.post('/items/add', upload.single('featureImage'), (req, res) => {
     processItem('');
   }
 
-  // function processItem(imageUrl) {
-  //   req.body.featureImage = imageUrl;
+  function processItem(imageUrl) {
+    req.body.featureImage = imageUrl;
 
-  //   // TODO: Process the req.body and add it as a new Item before redirecting to /items
+    // TODO: Process the req.body and add it as a new Item before redirecting to /items
 
-  //   // Example: 
-  //   // const newItem = req.body;
-  //   // // Add the new item to your database or perform other operations
-  //   // // ...
-  //   // // Redirect to /items
-  //   // res.redirect('/items');
-  // }
+    // Example: 
+    // const newItem = req.body;
+    // // Add the new item to your database or perform other operations
+    // // ...
+    // // Redirect to /items
+    // res.redirect('/items');
+  }
 });
 
 
