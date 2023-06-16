@@ -109,42 +109,53 @@ app.get('/shop', (req, res) => {
       });
   });
 
-  app.get('/items/add', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'additem.html'));
-  });
+app.get('/items/add', (req, res) => {
+  // When the '/items/add' route is accessed via GET request,
+  // serve the 'additem.html' file from the 'views' directory
+  res.sendFile(path.join(__dirname, 'views', 'additem.html'));
+});
+
+app.post('/items/add', upload.single('featureImage'), (req, res) => {
+  // When the '/items/add' route is accessed via POST request,
+  // handle the form submission and process the uploaded file
   
-  app.post('/items/add', upload.single('featureImage'), (req, res) => {
-    if (req.file) {
-      let streamUpload = (req) => {
-        return new Promise((resolve, reject) => {
-          let stream = cloudinary.uploader.upload_stream((error, result) => {
-            if (result) {
-              resolve(result);
-            } else {
-              reject(error);
-            }
-          });
+  if (req.file) {
+    // If a file is uploaded in the request, proceed with uploading it to Cloudinary
   
-          streamifier.createReadStream(req.file.buffer).pipe(stream);
+    let streamUpload = (req) => {
+      return new Promise((resolve, reject) => {
+        let stream = cloudinary.uploader.upload_stream((error, result) => {
+          if (result) {
+            resolve(result);
+          } else {
+            reject(error);
+          }
         });
-      };
   
-      async function upload(req) {
-        let result = await streamUpload(req);
-        console.log(result);
-        return result;
-      }
+        streamifier.createReadStream(req.file.buffer).pipe(stream);
+      });
+    };
   
-      upload(req)
-        .then((uploaded) => {
-          processItem(uploaded.url);
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    } else {
-      processItem('');
+    // Define an async function to handle the file upload
+    async function upload(req) {
+      let result = await streamUpload(req);
+      console.log(result);
+      return result;
     }
+  
+    // Call the upload function, which returns a promise,
+    // and process the uploaded file once it is uploaded
+    upload(req)
+      .then((uploaded) => {
+        processItem(uploaded.url);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  } else {
+    // If no file is uploaded in the request, process the item without an image
+    processItem('');
+  }
   
     function processItem(imageUrl) {
       req.body.featureImage = imageUrl;
