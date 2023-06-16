@@ -20,11 +20,6 @@ const upload = multer(); // no { storage: storage }
 
 const HTTP_PORT = process.env.PORT || 8080; // Set the port for the HTTP server
 
-// setup a 'route' to listen on the default url path
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-});
-
 // The code above imports the required modules and sets up the HTTP port for the server.
 cloudinary.config({
   cloud_name: 'dl4dntsmg',
