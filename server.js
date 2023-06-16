@@ -40,7 +40,7 @@ app.get('/about', (req, res) => {
 });
 
 app.get('/items/add', (req, res) => {
-  res.sendFile(path.join(__dirname, 'views', 'addItem.html'));
+  res.sendFile(path.join(__dirname + "/views/addItem.html"));
 });
 
 app.get('/shop', (req, res) => {
