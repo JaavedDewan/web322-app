@@ -4,7 +4,7 @@
 *  (including 3rd party web sites) or distributed to other students.
 * 
 *  Name: Jaaved Dewan Student ID: 126045178 Date: 05/31/23
-*a
+*
 *  Online (Cyclic) Link: https://lazy-lime-leopard-sock.cyclic.app/about
 *
 ********************************************************************************/ 
