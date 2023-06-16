@@ -68,7 +68,24 @@ function getCategories() {
   });
 }
 
+function addItem(itemData) {
+  return new Promise((resolve, reject) => {
+    if (itemData.published === undefined) {
+      itemData.published = false;
+    } else {
+      itemData.published = true;
+    }
+
+    itemData.id = items.length + 1;
+    items.push(itemData);
+
+    resolve(itemData);
+  });
+}
+
+
 module.exports = {
+  addItem,
   initialize,
   getAllItems,
   getPublishedItems,
