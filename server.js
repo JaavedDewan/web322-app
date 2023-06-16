@@ -25,9 +25,6 @@ app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
-// setup http server to listen on HTTP_PORT
-app.listen(HTTP_PORT);
-
 // The code above imports the required modules and sets up the HTTP port for the server.
 cloudinary.config({
   cloud_name: 'dl4dntsmg',
