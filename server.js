@@ -28,8 +28,6 @@ cloudinary.config({
   secure: true
 });
 
-app.get('/', (req, res) => res.json({ message: 'Hello World!' }))
-
 
 app.use(express.static('public')); // Serve static files from the "public" directory
 
