@@ -32,7 +32,7 @@ cloudinary.config({
 app.use(express.static('public')); // Serve static files from the "public" directory
 
 app.get('/', (req, res) => {
-  res.redirect('/about'); // Redirect the root URL to the /about route
+  res.redirect('/items/add'); // Redirect the root URL to the /about route
 });
 
 app.get('/about', (req, res) => {
