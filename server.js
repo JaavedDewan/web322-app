@@ -106,7 +106,7 @@ app.get("/shop", async (req, res) => {
     items.sort((a, b) => new Date(b.postDate) - new Date(a.postDate));
 
     // get the latest post from the front of the list (element 0)
-    let post = items[0];
+    let item = items[0];
 
     // store the "items" and "post" data in the viewData object (to be passed to the view)
     viewData.items = items;
@@ -126,7 +126,7 @@ app.get("/shop", async (req, res) => {
   }
 
   // render the "shop" view with all of the data (viewData)
-  res.render("shop", { data: viewData });
+  res.render("shop", { viewData: viewData });
 });
 
 app.get('/shop/:id', async (req, res) => {
@@ -142,10 +142,10 @@ app.get('/shop/:id', async (req, res) => {
       // if there's a "category" query, filter the returned posts by category
       if(req.query.category){
           // Obtain the published "posts" by category
-          items = await itemData.getPublishedItemsByCategory(req.query.category);
+          items = await storeService.getPublishedItemsByCategory(req.query.category);
       }else{
           // Obtain the published "posts"
-          items = await itemData.getPublishedItems();
+          items = await storeService.getPublishedItems();
       }
 
       // sort the published items by postDate
@@ -160,14 +160,14 @@ app.get('/shop/:id', async (req, res) => {
 
   try{
       // Obtain the item by "id"
-      viewData.item = await itemData.getItemById(req.params.id);
+      viewData.item = await storeService.getItemById(req.params.id);
   }catch(err){
       viewData.message = "no results"; 
   }
 
   try{
       // Obtain the full list of "categories"
-      let categories = await itemData.getCategories();
+      let categories = await storeService.getCategories();
 
       // store the "categories" data in the viewData object (to be passed to the view)
       viewData.categories = categories;
@@ -176,7 +176,7 @@ app.get('/shop/:id', async (req, res) => {
   }
 
   // render the "shop" view with all of the data (viewData)
-  res.render("shop", {data: viewData})
+  res.render("shop", {viewData: viewData})
 });
 
 app.get('/items', (req, res) => {
