@@ -131,13 +131,14 @@ app.get('/shop', (req, res) => {
   
   app.get('/categories', (req, res) => {
     storeService.getCategories()
-      .then((allCategories) => {
-        res.json(allCategories); // Send JSON response containing all categories
-      })
-      .catch((error) => {
-        res.status(500).json({ error: "Internal Server Error" }); // Send JSON response with error message
-      });
-  });
+        .then((categories) => {
+            res.render("categories", { categories: categories }); // Render the "categories" view with categories data
+        })
+        .catch((error) => {
+            res.render("categories", { message: "no results" }); // Render the "categories" view with error message
+        });
+});
+
 
   app.get('/item/:id', (req, res) => {
     const itemId = req.params.id;
