@@ -117,7 +117,7 @@ app.get('/shop', (req, res) => {
 app.get('/items/add', (req, res) => {
   // When the '/items/add' route is accessed via GET request,
   // serve the 'additem.html' file from the 'views' directory
-  res.sendFile(path.join(__dirname, 'views', 'additem.html'));
+  res.render('additem'); // Render the "additem" view
 });
 
 app.post('/items/add', upload.single('featureImage'), (req, res) => {
