@@ -106,7 +106,7 @@ app.get("/shop", async (req, res) => {
     items.sort((a, b) => new Date(b.postDate) - new Date(a.postDate));
 
     // get the latest post from the front of the list (element 0)
-    let item = items[0];
+    let post = items[0];
 
     // store the "items" and "post" data in the viewData object (to be passed to the view)
     viewData.items = items;
