@@ -30,14 +30,8 @@ cloudinary.config({
 });
 
 // Configure express-handlebars
-app.engine(
-  "hbs",
-  exphbs({
-    extname: ".hbs",
-    defaultLayout: "main",
-    layoutsDir: path.join(__dirname, "views", "layouts"),
-  })
-);
+app.engine('.hbs', exphbs.engine({ extname: '.hbs' }));
+app.set("view engine", "hbs"); // Set the view engine to use handlebars
 
 app.use(express.static('public')); // Serve static files from the "public" directory
 
@@ -50,7 +44,7 @@ app.get('/about', (req, res) => {
 });
 
 
-app.set("view engine", "hbs"); // Set the view engine to use handlebars
+
 
 app.get('/shop', (req, res) => {
     storeService.getPublishedItems()
