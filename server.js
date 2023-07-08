@@ -17,6 +17,7 @@ const multer = require("multer");
 const cloudinary = require('cloudinary').v2
 const streamifier = require('streamifier')
 const upload = multer(); // no { storage: storage }
+const exphbs = require("express-handlebars"); 
 
 const HTTP_PORT = process.env.PORT || 8080; // Set the port for the HTTP server
 
@@ -29,6 +30,7 @@ cloudinary.config({
 });
 
 
+
 app.use(express.static('public')); // Serve static files from the "public" directory
 
 app.get('/', (req, res) => {
@@ -36,10 +38,20 @@ app.get('/', (req, res) => {
 });
 
 app.get('/about', (req, res) => {
-  res.sendFile(path.join(__dirname, 'views', 'about.html')); // Send the about.html file as the response
+  res.render('about'); // Render the "about" view
 });
 
 
+// Configure express-handlebars
+app.engine(
+  "hbs",
+  exphbs({
+    extname: ".hbs",
+    defaultLayout: "main",
+    layoutsDir: path.join(__dirname, "views", "layouts"),
+  })
+);
+app.set("view engine", "hbs"); // Set the view engine to use handlebars
 
 app.get('/shop', (req, res) => {
     storeService.getPublishedItems()
