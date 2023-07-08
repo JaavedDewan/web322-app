@@ -76,8 +76,9 @@ app.set("view engine", "hbs"); // Set the view engine to use handlebars
 app.use(express.static('public')); // Serve static files from the "public" directory
 
 app.get('/', (req, res) => {
-  res.redirect('/about'); // Redirect the root URL to the /about route
+  res.redirect('/shop'); // Redirect the root URL to the /shop route
 });
+
 
 app.get('/about', (req, res) => {
   res.render('about'); // Render the "about" view
@@ -178,48 +179,47 @@ app.get('/shop/:id', async (req, res) => {
   res.render("shop", {data: viewData})
 });
 
-  app.get('/items', (req, res) => {
-    const category = req.query.category;
-    const minDate = req.query.minDate;
-  
-    if (category) {
-      storeService.getItemsByCategory(category)
-        .then((itemsByCategory) => {
-          res.render("items", { items: itemsByCategory }); // Render the "items" view with items filtered by category
-        })
-        .catch((error) => {
-          res.render("items", { message: "no results" }); // Render the "items" view with error message
-        });
-    } else if (minDate) {
-      storeService.getItemsByMinDate(minDate)
-        .then((itemsByMinDate) => {
-          res.render("items", { items: itemsByMinDate }); // Render the "items" view with items filtered by minimum date
-        })
-        .catch((error) => {
-          res.render("items", { message: "no results" }); // Render the "items" view with error message
-        });
-    } else {
-      storeService.getAllItems()
-        .then((allItems) => {
-          res.render("items", { items: allItems }); // Render the "items" view with all items
-        })
-        .catch((error) => {
-          res.render("items", { message: "no results" }); // Render the "items" view with error message
-        });
-    }
-  });
-  
-  
-  
-  app.get('/categories', (req, res) => {
-    storeService.getCategories()
-        .then((categories) => {
-            res.render("categories", { categories: categories }); // Render the "categories" view with categories data
-        })
-        .catch((error) => {
-            res.render("categories", { message: "no results" }); // Render the "categories" view with error message
-        });
+app.get('/items', (req, res) => {
+  const category = req.query.category;
+  const minDate = req.query.minDate;
+
+  if (category) {
+    storeService.getItemsByCategory(category)
+      .then((itemsByCategory) => {
+        res.render("items", { items: itemsByCategory, category: category }); // Pass the category to the "items" view
+      })
+      .catch((error) => {
+        res.render("items", { message: "No results", category: category }); // Pass the category and error message to the "items" view
+      });
+  } else if (minDate) {
+    storeService.getItemsByMinDate(minDate)
+      .then((itemsByMinDate) => {
+        res.render("items", { items: itemsByMinDate, category: null }); // Pass the items filtered by minimum date to the "items" view
+      })
+      .catch((error) => {
+        res.render("items", { message: "No results", category: null }); // Pass the error message to the "items" view
+      });
+  } else {
+    storeService.getAllItems()
+      .then((allItems) => {
+        res.render("items", { items: allItems, category: null }); // Pass all items to the "items" view
+      })
+      .catch((error) => {
+        res.render("items", { message: "No results", category: null }); // Pass the error message to the "items" view
+      });
+  }
 });
+
+app.get('/categories', (req, res) => {
+  storeService.getCategories()
+    .then((categories) => {
+      res.render("categories", { categories: categories }); // Pass the categories data to the "categories" view
+    })
+    .catch((error) => {
+      res.render("categories", { message: "No results" }); // Pass the error message to the "categories" view
+    });
+});
+
 
 
   app.get('/item/:id', (req, res) => {
