@@ -22,23 +22,13 @@
                 <!-- Collect the nav links, forms, and other content for toggling -->
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav">
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Shop</a>
-                        </li>
-                        <li class="nav-item active">
-                            <a class="nav-link" href="#">About</a>
-                        </li>
-                    </ul>
-                    <ul class="navbar-nav ml-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Items</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Categories</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/items/add">Add Item</a>
-                        </li>
+
+                        {{#navLink "/Shop"}}Shop{{/navLink}}
+                        {{#navLink "/About"}}About{{/navLink}}
+                        {{#navLink "/Items"}}Items{{/navLink}}
+                        {{#navLink "/Categories"}}Categories{{/navLink}}
+                        {{#navLink "/items/add"}}Add Items{{/navLink}}
+                        
                     </ul>
                 </div>
                 <!-- /.navbar-collapse -->

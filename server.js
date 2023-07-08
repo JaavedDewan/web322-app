@@ -29,8 +29,48 @@ cloudinary.config({
   secure: true
 });
 
+
+
+app.use(function(req,res,next){
+  let route = req.path.substring(1);
+  app.locals.activeRoute = "/" + (isNaN(route.split('/')[1]) ? route.replace(/\/(?!.*)/, "") : route.replace(/\/(.*)/, ""));
+  app.locals.viewingCategory = req.query.category;
+  next();
+});
+
+// Define the navLink helper function
+const navLink = function (url, options) {
+  return (
+    '<li class="nav-item"><a ' +
+    (url == app.locals.activeRoute ? 'class="nav-link active"' : 'class="nav-link" ') +
+    ' href="' +
+    url +
+    '">' +
+    options.fn(this) +
+    "</a></li>"
+  );
+};
+
+// Define the equal helper function
+const equal = function (lvalue, rvalue, options) {
+  if (arguments.length < 3)
+    throw new Error("Handlebars Helper equal needs 2 parameters");
+  if (lvalue != rvalue) {
+    return options.inverse(this);
+  } else {
+    return options.fn(this);
+  }
+};
+
+
 // Configure express-handlebars
-app.engine('.hbs', exphbs.engine({ extname: '.hbs' }));
+app.engine('.hbs', exphbs.engine({
+  extname: '.hbs',
+  helpers: {
+    navLink: navLink,
+    equal: equal // Register the equal helper
+  }
+}));
 app.set("view engine", "hbs"); // Set the view engine to use handlebars
 
 app.use(express.static('public')); // Serve static files from the "public" directory
@@ -182,8 +222,6 @@ app.post('/items/add', upload.single('featureImage'), (req, res) => {
 app.use((req, res) => {
   res.status(404).send("Page Not Found"); // Send a 404 response for unknown routes
 });
-
-
 
 
 storeService.initialize()
