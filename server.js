@@ -29,7 +29,15 @@ cloudinary.config({
   secure: true
 });
 
-
+// Configure express-handlebars
+app.engine(
+  "hbs",
+  exphbs({
+    extname: ".hbs",
+    defaultLayout: "main",
+    layoutsDir: path.join(__dirname, "views", "layouts"),
+  })
+);
 
 app.use(express.static('public')); // Serve static files from the "public" directory
 
@@ -41,15 +49,7 @@ app.get('/about', (req, res) => {
   res.render('about'); // Render the "about" view
 });
 
-// Configure express-handlebars
-app.engine(
-  "hbs",
-  exphbs({
-    extname: ".hbs",
-    defaultLayout: "main",
-    layoutsDir: path.join(__dirname, "views", "layouts"),
-  })
-);
+
 app.set("view engine", "hbs"); // Set the view engine to use handlebars
 
 app.get('/shop', (req, res) => {
