@@ -25,7 +25,13 @@
                 <td>{{this.itemId}}</td>
                 <td>{{this.title}}</td>
                 <td>{{this.postDate}}</td>
-                <td><a href="/items?category={{this.category}}">{{this.category}}</a></td>
+                <td>
+                  {{#ifCond ../category this.category}}
+                    <a href="/items?category={{this.category}}" class="active">{{this.category}}</a>
+                  {{else}}
+                    <a href="/items?category={{this.category}}">{{this.category}}</a>
+                  {{/ifCond}}
+                </td>
                 <td>{{this.price}}</td>
                 <td>{{this.published}}</td>
               </tr>
