@@ -41,7 +41,6 @@ app.get('/about', (req, res) => {
   res.render('about'); // Render the "about" view
 });
 
-
 // Configure express-handlebars
 app.engine(
   "hbs",
