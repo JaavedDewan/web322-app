@@ -103,29 +103,30 @@ app.get('/shop', (req, res) => {
     if (category) {
       storeService.getItemsByCategory(category)
         .then((itemsByCategory) => {
-          res.json(itemsByCategory); // Send JSON response containing items filtered by category
+          res.render("items", { items: itemsByCategory }); // Render the "items" view with items filtered by category
         })
         .catch((error) => {
-          res.status(500).json({ error: "Internal Server Error" }); // Send JSON response with error message
+          res.render("items", { message: "no results" }); // Render the "items" view with error message
         });
     } else if (minDate) {
       storeService.getItemsByMinDate(minDate)
         .then((itemsByMinDate) => {
-          res.json(itemsByMinDate); // Send JSON response containing items filtered by minimum date
+          res.render("items", { items: itemsByMinDate }); // Render the "items" view with items filtered by minimum date
         })
         .catch((error) => {
-          res.status(500).json({ error: "Internal Server Error" }); // Send JSON response with error message
+          res.render("items", { message: "no results" }); // Render the "items" view with error message
         });
     } else {
       storeService.getAllItems()
         .then((allItems) => {
-          res.json(allItems); // Send JSON response containing all items
+          res.render("items", { items: allItems }); // Render the "items" view with all items
         })
         .catch((error) => {
-          res.status(500).json({ error: "Internal Server Error" }); // Send JSON response with error message
+          res.render("items", { message: "no results" }); // Render the "items" view with error message
         });
     }
   });
+  
   
   
   app.get('/categories', (req, res) => {
