@@ -84,18 +84,100 @@ app.get('/about', (req, res) => {
 });
 
 
+app.get("/shop", async (req, res) => {
+  // Declare an object to store properties for the view
+  let viewData = {};
 
+  try {
+    // declare empty array to hold "post" objects
+    let items = [];
 
-app.get('/shop', (req, res) => {
-    storeService.getPublishedItems()
-      .then((publishedItems) => {
-        res.json(publishedItems); // Send JSON response containing published items
-      })
-      .catch((error) => {
-        res.status(500).json({ error: "Internal Server Error" }); // Send JSON response with error message
-      });
-  });
-  
+    // if there's a "category" query, filter the returned posts by category
+    if (req.query.category) {
+      // Obtain the published "posts" by category
+      items = await storeService.getPublishedItemsByCategory(req.query.category);
+    } else {
+      // Obtain the published "items"
+      items = await storeService.getPublishedItems();
+    }
+
+    // sort the published items by postDate
+    items.sort((a, b) => new Date(b.postDate) - new Date(a.postDate));
+
+    // get the latest post from the front of the list (element 0)
+    let post = items[0];
+
+    // store the "items" and "post" data in the viewData object (to be passed to the view)
+    viewData.items = items;
+    viewData.item = item;
+  } catch (err) {
+    viewData.message = "no results";
+  }
+
+  try {
+    // Obtain the full list of "categories"
+    let categories = await storeService.getCategories();
+
+    // store the "categories" data in the viewData object (to be passed to the view)
+    viewData.categories = categories;
+  } catch (err) {
+    viewData.categoriesMessage = "no results";
+  }
+
+  // render the "shop" view with all of the data (viewData)
+  res.render("shop", { data: viewData });
+});
+
+app.get('/shop/:id', async (req, res) => {
+
+  // Declare an object to store properties for the view
+  let viewData = {};
+
+  try{
+
+      // declare empty array to hold "item" objects
+      let items = [];
+
+      // if there's a "category" query, filter the returned posts by category
+      if(req.query.category){
+          // Obtain the published "posts" by category
+          items = await itemData.getPublishedItemsByCategory(req.query.category);
+      }else{
+          // Obtain the published "posts"
+          items = await itemData.getPublishedItems();
+      }
+
+      // sort the published items by postDate
+      items.sort((a,b) => new Date(b.postDate) - new Date(a.postDate));
+
+      // store the "items" and "item" data in the viewData object (to be passed to the view)
+      viewData.items = items;
+
+  }catch(err){
+      viewData.message = "no results";
+  }
+
+  try{
+      // Obtain the item by "id"
+      viewData.item = await itemData.getItemById(req.params.id);
+  }catch(err){
+      viewData.message = "no results"; 
+  }
+
+  try{
+      // Obtain the full list of "categories"
+      let categories = await itemData.getCategories();
+
+      // store the "categories" data in the viewData object (to be passed to the view)
+      viewData.categories = categories;
+  }catch(err){
+      viewData.categoriesMessage = "no results"
+  }
+
+  // render the "shop" view with all of the data (viewData)
+  res.render("shop", {data: viewData})
+});
+
   app.get('/items', (req, res) => {
     const category = req.query.category;
     const minDate = req.query.minDate;

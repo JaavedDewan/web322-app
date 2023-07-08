@@ -57,6 +57,18 @@ function getPublishedItems() {
   });
 }
 
+// Returns published items filtered by category
+function getPublishedItemsByCategory(category) {
+  return new Promise((resolve, reject) => {
+    const publishedItemsByCategory = items.filter((item) => item.published === true && item.category === category); // Filter items based on published flag and category
+    if (publishedItemsByCategory.length === 0) {
+      reject("No published items found for the given category"); // Reject the promise if no published items are found for the given category
+      return;
+    }
+    resolve(publishedItemsByCategory); // Resolve the promise with the published items array filtered by category
+  });
+}
+
 // Returns all categories
 function getCategories() {
   return new Promise((resolve, reject) => {
@@ -127,6 +139,11 @@ function addItem(itemData) {
     // Assign a unique ID to the item
     itemData.id = items.length + 1;
 
+    // Add the current date as the 'postDate' property
+    const currentDate = new Date();
+    const formattedDate = currentDate.toISOString().split("T")[0];
+    itemData.postDate = formattedDate;
+
     // Add the item to the 'items' array
     items.push(itemData);
 
@@ -134,6 +151,7 @@ function addItem(itemData) {
     resolve(itemData);
   });
 }
+
 
 
 module.exports = {
@@ -144,5 +162,6 @@ module.exports = {
   getItemById,
   getItemsByMinDate,
   getPublishedItems,
+  getPublishedItemsByCategory,
   getCategories,
 };
