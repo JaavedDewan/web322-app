@@ -126,7 +126,7 @@ app.get("/shop", async (req, res) => {
   }
 
   // render the "shop" view with all of the data (viewData)
-  res.render("shop", { viewData: viewData });
+  res.render("shop", { data: viewData });
 });
 
 app.get('/shop/:id', async (req, res) => {
@@ -176,7 +176,7 @@ app.get('/shop/:id', async (req, res) => {
   }
 
   // render the "shop" view with all of the data (viewData)
-  res.render("shop", {viewData: viewData})
+  res.render("shop", {data: viewData})
 });
 
 app.get('/items', (req, res) => {
