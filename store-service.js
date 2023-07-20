@@ -258,11 +258,74 @@ function addItem(itemData) {
   });
 }
 
+function addCategory(categoryData) {
+  // Iterate over every property in the object to check for empty values and replace them with null
+  for (const key in categoryData) {
+    if (categoryData.hasOwnProperty(key) && categoryData[key] === "") {
+      categoryData[key] = null;
+    }
+  }
 
+  return new Promise((resolve, reject) => {
+    Category.create(categoryData)
+      .then((createdCategory) => {
+        resolve(createdCategory); // Indicate success and provide the created category data
+      })
+      .catch((error) => {
+        console.error('Error creating category:', error);
+        reject('Unable to create category'); // Indicate failure to create the category
+      });
+  });
+}
+
+function deleteCategoryById(id) {
+  return new Promise((resolve, reject) => {
+    Category.destroy({
+      where: {
+        id: id
+      }
+    })
+      .then((rowsDeleted) => {
+        if (rowsDeleted > 0) {
+          resolve('Category deleted successfully'); // Indicate success and provide a message
+        } else {
+          reject('Category not found'); // Indicate failure if no category was deleted
+        }
+      })
+      .catch((error) => {
+        console.error('Error deleting category:', error);
+        reject('Unable to delete category'); // Indicate failure to delete the category
+      });
+  });
+}
+
+function deletePostById(id) {
+  return new Promise((resolve, reject) => {
+    Post.destroy({
+      where: {
+        id: id
+      }
+    })
+      .then((rowsDeleted) => {
+        if (rowsDeleted > 0) {
+          resolve('Post deleted successfully'); // Indicate success and provide a message
+        } else {
+          reject('Post not found'); // Indicate failure if no post was deleted
+        }
+      })
+      .catch((error) => {
+        console.error('Error deleting post:', error);
+        reject('Unable to delete post'); // Indicate failure to delete the post
+      });
+  });
+}
 
 
 module.exports = {
   addItem,
+  addCategory,
+  deleteCategoryById,
+  deletePostById,
   initialize,
   getAllItems,
   getItemsByCategory,

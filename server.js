@@ -11,7 +11,6 @@
 
 const express = require("express"); // Import the express module
 const app = express(); // Create a new express application
-const path = require("path"); // Import the path module
 const storeService = require("./store-service"); // Import the store-service module
 const multer = require("multer");
 const cloudinary = require('cloudinary').v2
@@ -29,7 +28,7 @@ cloudinary.config({
   secure: true
 });
 
-
+app.use(express.urlencoded({ extended: true }));
 
 app.use(function(req,res,next){
   let route = req.path.substring(1);
@@ -186,39 +185,57 @@ app.get('/items', (req, res) => {
   if (category) {
     storeService.getItemsByCategory(category)
       .then((itemsByCategory) => {
-        res.render("items", { items: itemsByCategory, category: category }); // Pass the category to the "items" view
+        if (itemsByCategory.length === 0) {
+          res.render("items", { message: "No results", category: category }); // Render the "items" view with error message
+        } else {
+          res.render("items", { items: itemsByCategory, category: category }); // Pass the category and items to the "items" view
+        }
       })
       .catch((error) => {
-        res.render("items", { message: "No results", category: category }); // Pass the category and error message to the "items" view
+        res.render("items", { message: "No results", category: category }); // Render the "items" view with error message
       });
   } else if (minDate) {
     storeService.getItemsByMinDate(minDate)
       .then((itemsByMinDate) => {
-        res.render("items", { items: itemsByMinDate, category: null }); // Pass the items filtered by minimum date to the "items" view
+        if (itemsByMinDate.length === 0) {
+          res.render("items", { message: "No results", category: null }); // Render the "items" view with error message
+        } else {
+          res.render("items", { items: itemsByMinDate, category: null }); // Pass the items filtered by minimum date to the "items" view
+        }
       })
       .catch((error) => {
-        res.render("items", { message: "No results", category: null }); // Pass the error message to the "items" view
+        res.render("items", { message: "No results", category: null }); // Render the "items" view with error message
       });
   } else {
     storeService.getAllItems()
       .then((allItems) => {
-        res.render("items", { items: allItems, category: null }); // Pass all items to the "items" view
+        if (allItems.length === 0) {
+          res.render("items", { message: "No results", category: null }); // Render the "items" view with error message
+        } else {
+          res.render("items", { items: allItems, category: null }); // Pass all items to the "items" view
+        }
       })
       .catch((error) => {
-        res.render("items", { message: "No results", category: null }); // Pass the error message to the "items" view
+        res.render("items", { message: "No results", category: null }); // Render the "items" view with error message
       });
   }
 });
 
+
 app.get('/categories', (req, res) => {
   storeService.getCategories()
     .then((categories) => {
-      res.render("categories", { categories: categories }); // Pass the categories data to the "categories" view
+      if (categories.length === 0) {
+        res.render("categories", { message: "No results" }); // Render the "categories" view with error message
+      } else {
+        res.render("categories", { categories: categories }); // Pass the categories data to the "categories" view
+      }
     })
     .catch((error) => {
-      res.render("categories", { message: "No results" }); // Pass the error message to the "categories" view
+      res.render("categories", { message: "No results" }); // Render the "categories" view with error message
     });
 });
+
 
 
 
@@ -238,11 +255,17 @@ app.get('/categories', (req, res) => {
       });
   });
 
-app.get('/items/add', (req, res) => {
-  // When the '/items/add' route is accessed via GET request,
-  // serve the 'additem.html' file from the 'views' directory
-  res.render('additem'); // Render the "additem" view
-});
+  app.get('/items/add', (req, res) => {
+    storeService.getCategories()
+      .then((categories) => {
+        res.render('addPost', { categories: categories });
+      })
+      .catch((error) => {
+        console.error(error);
+        res.render('addPost', { categories: [] });
+      });
+  });
+  
 
 app.post('/items/add', upload.single('featureImage'), (req, res) => {
   // When the '/items/add' route is accessed via POST request,
@@ -301,6 +324,47 @@ app.post('/items/add', upload.single('featureImage'), (req, res) => {
           res.status(500).json({ error: "Internal Server Error" }); // Send JSON response with error message
         });
     }
+  });
+
+  app.get('/categories/add', (req, res) => {
+    res.render('addcategory'); // Render the "addcategory" view
+  });
+  
+  app.post('/categories/add', (req, res) => {
+    storeService.addCategory(req.body)
+      .then(() => {
+        res.redirect('/categories'); // Redirect to /categories after adding the category
+      })
+      .catch((error) => {
+        console.error(error);
+        res.status(500).send('Unable to create category'); // Send a 500 response with an error message
+      });
+  });
+  
+  app.get('/categories/delete/:id', (req, res) => {
+    const categoryId = req.params.id;
+  
+    storeService.deleteCategoryById(categoryId)
+      .then(() => {
+        res.redirect('/categories'); // Redirect to /categories after deleting the category
+      })
+      .catch((error) => {
+        console.error(error);
+        res.status(500).send('Unable to Remove Category / Category not found'); // Send a 500 response with an error message
+      });
+  });
+  
+  app.get('/items/delete/:id', (req, res) => {
+    const itemId = req.params.id;
+  
+    storeService.deletePostById(itemId)
+      .then(() => {
+        res.redirect('/items'); // Redirect to /items after deleting the item
+      })
+      .catch((error) => {
+        console.error(error);
+        res.status(500).send('Unable to Remove Item / Item not found'); // Send a 500 response with an error message
+      });
   });
 
 app.use((req, res) => {
