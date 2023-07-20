@@ -233,21 +233,12 @@ function getItemById(id) {
 
 
 function addItem(itemData) {
-  // Ensure itemData is an object before proceeding
-  console.log("addItem function called");
-  console.log("itemData type:", typeof itemData);
-  console.log("itemData:", itemData);
-  
-  if (typeof itemData !== "object" || itemData === null) {
-    return Promise.reject(new Error("itemData must be a valid object."));
-  }
-
   // Ensure the "published" property is set correctly
-  itemData.published = Boolean(itemData.published);
+  itemData.published = itemData.published ? true : false;
 
   // Iterate over every property in the object to check for empty values and replace them with null
   for (const key in itemData) {
-    if (itemData.hasOwnProperty(key) && itemData[key] === "") {
+    if (Object.prototype.hasOwnProperty.call(itemData, key) && itemData[key] === "") {
       itemData[key] = null;
     }
   }
@@ -255,15 +246,18 @@ function addItem(itemData) {
   // Assign a value for postDate (the current date)
   itemData.postDate = new Date();
 
-  return Item.create(itemData)
-    .then((createdItem) => {
-      return createdItem; // Indicate success and provide the created item data
-    })
-    .catch((error) => {
-      console.error('Error creating item:', error);
-      throw new Error('Unable to create item'); // Indicate failure to create the item
-    });
+  return new Promise((resolve, reject) => {
+    Item.create(itemData)
+      .then((createdItem) => {
+        resolve(createdItem); // Indicate success and provide the created item data
+      })
+      .catch((error) => {
+        console.error('Error creating item:', error);
+        reject('Unable to create item'); // Indicate failure to create the item
+      });
+  });
 }
+
 
 
 function addCategory(categoryData) {
