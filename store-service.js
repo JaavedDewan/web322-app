@@ -234,6 +234,7 @@ function getItemById(id) {
 
 function addItem(itemData) {
   // Ensure itemData is an object before proceeding
+  console.log(itemData);
   if (typeof itemData !== "object" || itemData === null) {
     return Promise.reject(new Error("itemData must be a valid object."));
   }
