@@ -256,6 +256,7 @@ app.get('/categories', (req, res) => {
   });
 
   app.get('/items/add', (req, res) => {
+    console.log("itemData:", itemData);
     storeService.getCategories()
       .then((categories) => {
         res.render('addPost', { categories: categories });
