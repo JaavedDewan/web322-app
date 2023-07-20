@@ -327,7 +327,7 @@ app.post('/items/add', upload.single('featureImage'), (req, res) => {
   });
 
   app.get('/categories/add', (req, res) => {
-    res.render('addcategory'); // Render the "addcategory" view
+    res.render('addCategory'); // Render the "addcategory" view
   });
   
   app.post('/categories/add', (req, res) => {
