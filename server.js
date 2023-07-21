@@ -267,66 +267,50 @@ app.get('/categories', (req, res) => {
   });
   
 
-  app.post('/items/add', upload.single('featureImage'), (req, res) => {
-    // When the '/items/add' route is accessed via POST request,
-    // handle the form submission and process the uploaded file
+app.post('/items/add', upload.single('featureImage'), (req, res) => {
+  // When the '/items/add' route is accessed via POST request,
+  // handle the form submission and process the uploaded file
   
-    // Extract form data including the selected category
-    const itemData = {
-      title: req.body.title,
-      price: req.body.price,
-      body: req.body.body,
-      published: req.body.published === 'on', // Convert the checkbox value to a boolean
-      categoryId: req.body.categoryId // This will hold the selected category ID from the dropdown
+  if (req.file) {
+    // If a file is uploaded in the request, proceed with uploading it to Cloudinary
+  
+    let streamUpload = (req) => {
+      return new Promise((resolve, reject) => {
+        let stream = cloudinary.uploader.upload_stream((error, result) => {
+          if (result) {
+            resolve(result);
+          } else {
+            reject(error);
+          }
+        });
+  
+        streamifier.createReadStream(req.file.buffer).pipe(stream);
+      });
     };
   
-    // If a file is uploaded in the request, proceed with uploading it to Cloudinary
-    if (req.file) {
-      let streamUpload = (req) => {
-        return new Promise((resolve, reject) => {
-          let stream = cloudinary.uploader.upload_stream((error, result) => {
-            if (result) {
-              resolve(result);
-            } else {
-              reject(error);
-            }
-          });
-  
-          streamifier.createReadStream(req.file.buffer).pipe(stream);
-        });
-      };
-  
-      // Define an async function to handle the file upload
-      async function upload(req) {
-        try {
-          let result = await streamUpload(req);
-          return result.url;
-        } catch (error) {
-          console.error('Error uploading file to Cloudinary:', error);
-          return ''; // Return an empty string to handle the case without an image
-        }
-      }
-  
-      // Call the upload function, which returns a promise,
-      // and process the uploaded file once it is uploaded
-      upload(req)
-        .then((imageUrl) => {
-          // Add the Cloudinary URL or other file-related data to the itemData object
-          itemData.featureImage = imageUrl;
-          processItem();
-        })
-        .catch((error) => {
-          console.error(error);
-          processItem();
-        });
-    } else {
-      // If no file is uploaded in the request, process the item without an image
-      processItem();
+    // Define an async function to handle the file upload
+    async function upload(req) {
+      let result = await streamUpload(req);
+      console.log(result);
+      return result;
     }
+  
+    // Call the upload function, which returns a promise,
+    // and process the uploaded file once it is uploaded
+    upload(req)
+      .then((uploaded) => {
+        processItem(uploaded.url);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  } else {
+    // If no file is uploaded in the request, process the item without an image
+    processItem('');
+  }
   
     function processItem(imageUrl) {
       req.body.featureImage = imageUrl;
-      req.body.category = itemData.categoryId; // Add the category to the request body
   
       // Process the req.body and add it as a new item in your database
       const newItem = req.body;
