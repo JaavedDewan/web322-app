@@ -17,8 +17,8 @@ function formatDate(dateObj) {
   return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
 }
 
-// Define the "Item" model
-const Item = sequelize.define('Item', {
+// Define the "Post" model
+const Post = sequelize.define('Post', {
   body: {
     type: Sequelize.TEXT,
     allowNull: false
@@ -326,6 +326,7 @@ function deletePostById(id) {
 module.exports = {
   addItem,
   addCategory,
+  Category,
   deleteCategoryById,
   deletePostById,
   initialize,
@@ -336,4 +337,5 @@ module.exports = {
   getPublishedItems,
   getPublishedItemsByCategory,
   getCategories,
+  Post,
 };
