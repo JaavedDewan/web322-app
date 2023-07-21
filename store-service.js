@@ -43,6 +43,11 @@ const Item = sequelize.define('Item', {
   price: {
     type: Sequelize.DOUBLE,
     allowNull: true
+    
+  },
+  category: {
+    type: Sequelize.STRING,
+    allowNull: true
   }
 });
 
