@@ -314,7 +314,7 @@ app.post('/items/add', upload.single('featureImage'), (req, res) => {
     req.body.featureImage = imageUrl;
 
     // Extract the selected category value from the form data
-    const categoryId = req.body.category;
+    const category = req.body.category;
 
     // Process the req.body and add it as a new item in your database
     const newItem = {
