@@ -322,7 +322,7 @@ app.post('/items/add', upload.single('featureImage'), (req, res) => {
       price: req.body.price,
       body: req.body.body,
       published: req.body.published === 'on', // Convert the checkbox value to a boolean
-      itemsCategory: ItemCategory // Set the extracted categoryId as the foreign key value
+      category: category // Set the extracted categoryId as the foreign key value
     };
 
     // Rest of the code to create the item and save it to the database
