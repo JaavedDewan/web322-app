@@ -336,6 +336,4 @@ module.exports = {
   getPublishedItems,
   getPublishedItemsByCategory,
   getCategories,
-  Item,
-  Category,
 };
