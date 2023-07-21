@@ -47,7 +47,7 @@ const Item = sequelize.define('Item', {
   },
   category: {
     type: Sequelize.STRING,
-    allowNull: true
+    allowNull: false
   }
 });
 
