@@ -324,9 +324,14 @@ app.get('/categories', (req, res) => {
       processItem();
     }
   
-    function processItem() {
-      // Call the addItem function to add the new item to the database
-      storeService.addItem(itemData)
+    function processItem(imageUrl) {
+      req.body.featureImage = imageUrl;
+      req.body.category = itemData.category; // Add the category to the request body
+  
+      // Process the req.body and add it as a new item in your database
+      const newItem = req.body;
+      // Add the new item to your database or perform other operations
+      storeService.addItem(newItem)
         .then(() => {
           res.redirect('/items'); // Redirect to /items after adding the item
         })
