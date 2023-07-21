@@ -255,25 +255,26 @@ app.get('/categories', (req, res) => {
       });
   });
 
-  app.get('/items/add', (req, res) => {
-    storeService.getCategories()
-      .then((categories) => {
-        res.render('addPost', { categories: categories });
-      })
-      .catch((error) => {
-        console.error(error);
-        res.render('addPost', { categories: [] });
-      });
-  });
-  
+// GET route to render the 'addPost' view with the list of categories
+app.get('/items/add', (req, res) => {
+  storeService.getCategories()
+    .then((categories) => {
+      res.render('addPost', { categories: categories });
+    })
+    .catch((error) => {
+      console.error(error);
+      res.render('addPost', { categories: [] });
+    });
+});
 
+// POST route to handle form submission and process the uploaded file
 app.post('/items/add', upload.single('featureImage'), (req, res) => {
   // When the '/items/add' route is accessed via POST request,
   // handle the form submission and process the uploaded file
-  
+
   if (req.file) {
     // If a file is uploaded in the request, proceed with uploading it to Cloudinary
-  
+
     let streamUpload = (req) => {
       return new Promise((resolve, reject) => {
         let stream = cloudinary.uploader.upload_stream((error, result) => {
@@ -283,18 +284,18 @@ app.post('/items/add', upload.single('featureImage'), (req, res) => {
             reject(error);
           }
         });
-  
+
         streamifier.createReadStream(req.file.buffer).pipe(stream);
       });
     };
-  
+
     // Define an async function to handle the file upload
     async function upload(req) {
       let result = await streamUpload(req);
       console.log(result);
       return result;
     }
-  
+
     // Call the upload function, which returns a promise,
     // and process the uploaded file once it is uploaded
     upload(req)
@@ -308,23 +309,35 @@ app.post('/items/add', upload.single('featureImage'), (req, res) => {
     // If no file is uploaded in the request, process the item without an image
     processItem('');
   }
-  
-    function processItem(imageUrl) {
-      req.body.featureImage = imageUrl;
-  
-      // Process the req.body and add it as a new item in your database
-      const newItem = req.body;
-      // Add the new item to your database or perform other operations
-      storeService.addItem(newItem)
-        .then(() => {
-          res.redirect('/items'); // Redirect to /items after adding the item
-        })
-        .catch((error) => {
-          console.error(error);
-          res.status(500).json({ error: "Internal Server Error" }); // Send JSON response with error message
-        });
-    }
-  });
+
+  function processItem(imageUrl) {
+    req.body.featureImage = imageUrl;
+
+    // Extract the selected category value from the form data
+    const categoryId = req.body.category;
+
+    // Process the req.body and add it as a new item in your database
+    const newItem = {
+      title: req.body.title,
+      price: req.body.price,
+      body: req.body.body,
+      published: req.body.published === 'on', // Convert the checkbox value to a boolean
+      categoryId: categoryId // Set the extracted categoryId as the foreign key value
+    };
+
+    // Rest of the code to create the item and save it to the database
+    storeService
+      .addItem(newItem)
+      .then(() => {
+        res.redirect('/items'); // Redirect to /items after adding the item
+      })
+      .catch((error) => {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' }); // Send JSON response with error message
+      });
+  }
+});
+
 
   app.get('/categories/add', (req, res) => {
     res.render('addCategory'); // Render the "addcategory" view
