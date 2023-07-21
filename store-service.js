@@ -55,9 +55,8 @@ const Category = sequelize.define('Category', {
 });
 
 // Define the relationship between Item and Category (assuming a many-to-many relationship)
-Item.belongsTo(Category, { foreignKey: 'category' }); // This will create the "category" column in the "Items" table
-
-Category.hasMany(Item, { foreignKey: 'category' }); // This will allow one category to have multiple items
+Item.belongsToMany(Category, { through: 'ItemCategory' });
+Category.belongsToMany(Item, { through: 'ItemCategory' });
 
 // Synchronize the models with the database (create the tables if they don't exist)
 sequelize.sync();
@@ -253,7 +252,7 @@ function addItem(itemData) {
         resolve(createdItem); // Indicate success and provide the created item data
       })
       .catch((error) => {
-        console.error('Error creating item:', error.message); // Log the detailed error message
+        console.error('Error creating item:', error);
         reject('Unable to create item'); // Indicate failure to create the item
       });
   });
