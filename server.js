@@ -277,7 +277,7 @@ app.get('/categories', (req, res) => {
       price: req.body.price,
       body: req.body.body,
       published: req.body.published === 'on', // Convert the checkbox value to a boolean
-      categoryId: req.body.category // This will hold the selected category ID from the dropdown
+      categoryId: req.body.categoryId // This will hold the selected category ID from the dropdown
     };
   
     // If a file is uploaded in the request, proceed with uploading it to Cloudinary
