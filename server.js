@@ -356,7 +356,7 @@ app.post('/items/add', upload.single('featureImage'), (req, res) => {
   
   app.get('/items/delete/:id', (req, res) => {
     const itemId = req.params.id;
-  
+    console.log('Deleting item with ID:', itemId);
     storeService.deletePostById(itemId)
       .then(() => {
         res.redirect('/items'); // Redirect to /items after deleting the item
