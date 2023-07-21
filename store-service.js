@@ -18,7 +18,7 @@ function formatDate(dateObj) {
 }
 
 // Define the "Item" model
-const Item = sequelize.define('PItem', {
+const Item = sequelize.define('Item', {
   body: {
     type: Sequelize.TEXT,
     allowNull: false
