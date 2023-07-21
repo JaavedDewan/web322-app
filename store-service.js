@@ -326,7 +326,6 @@ function deletePostById(id) {
 module.exports = {
   addItem,
   addCategory,
-  Category,
   deleteCategoryById,
   deletePostById,
   initialize,
@@ -337,5 +336,4 @@ module.exports = {
   getPublishedItems,
   getPublishedItemsByCategory,
   getCategories,
-  Post,
 };
