@@ -55,8 +55,9 @@ const Category = sequelize.define('Category', {
 });
 
 // Define the relationship between Item and Category (assuming a many-to-many relationship)
-Item.belongsTo(Category); // Each item belongs to a single category
-Category.hasMany(Item);   // Each category can have multiple items
+Item.belongsTo(Category, { foreignKey: 'categoryId' });
+Category.hasMany(Item, { foreignKey: 'categoryId' });
+
 
 // Synchronize the models with the database (create the tables if they don't exist)
 sequelize.sync();
