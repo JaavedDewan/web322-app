@@ -43,11 +43,6 @@ const Item = sequelize.define('Item', {
   price: {
     type: Sequelize.DOUBLE,
     allowNull: true
-    
-  },
-  category: {
-    type: Sequelize.STRING,
-    allowNull: true
   }
 });
 
@@ -55,12 +50,12 @@ const Item = sequelize.define('Item', {
 const Category = sequelize.define('Category', {
   category: {
     type: Sequelize.STRING,
-    allowNull: true
+    allowNull: false
   }
 });
 
 // Define the relationship between Item and Category (assuming a many-to-many relationship)
-Item.belongsTo(Category, {foreignKey: 'category'});
+Item.belongsToMany(Category, { through: 'ItemCategory' });
 
 // Synchronize the models with the database (create the tables if they don't exist)
 sequelize.sync();
