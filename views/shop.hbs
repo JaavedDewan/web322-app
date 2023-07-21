@@ -12,7 +12,8 @@
           />
         </div>
 
-        <div class="col-8"><br /><br />
+        <div class="col-8"><br />
+          <br />
           <div class="row">
             <div class="col-12">
               {{{safeHTML data.post.body}}}
@@ -30,8 +31,8 @@
     </div>
     {{else}}
     <div class="col-md-12 text-center">
-      <h2>{{data.message}}</h2>
-      <p>Please try another Post / Category</p>
+        <h2>{{data.message}}</h2>
+        <p>Please try another Post / Category</p>
     </div>
     {{/if}}
   </section>
@@ -39,21 +40,23 @@
   <aside class="col-md-3">
     <br /><br />
     <h4>Items</h4>
-    {{#if data.items}}
+
     <ul class="list-group">
-      {{#each data.items}}
-      <a href="/shop/{{this.id}}?category={{../viewingCategory}}" class="list-group-item">{{this.title}}</a>
-      {{/each}}
+      {{#if data.items}}
+        {{#each data.items}}
+<a href="/shop/{{this.id}}?category={{../data.post.Category.id}}" class="list-group-item">{{this.title}}</a>
+        {{/each}}
+      {{/if}}
     </ul>
-    {{/if}}
 
     <h4>Categories</h4>
-    {{#if data.categories}}
+
     <ul class="list-group">
-      {{#each data.categories}}
-      <a href="/shop?category={{this.id}}" class="list-group-item">{{this.category}}</a>
-      {{/each}}
+      {{#if data.categories}}
+        {{#each data.categories}}
+          <a href="/shop?category={{this.id}}" class="list-group-item">{{this.category}}</a>
+        {{/each}}
+      {{/if}}
     </ul>
-    {{/if}}
   </aside>
 </div>
