@@ -252,7 +252,7 @@ function addItem(itemData) {
         resolve(createdItem); // Indicate success and provide the created item data
       })
       .catch((error) => {
-        console.error('Error creating item:', error);
+        console.error('Error creating item:', error.message); // Log the detailed error message
         reject('Unable to create item'); // Indicate failure to create the item
       });
   });
