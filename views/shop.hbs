@@ -1,7 +1,7 @@
 <div class="row">
   <section class="main col-md-9">
     {{#if data.post}}
-    <item>
+    <div>
       <div class="row">
         <div class="col-4">
           <h2>{{data.post.title}}</h2>
@@ -28,7 +28,7 @@
           </div>
         </div>
       </div>
-    </item>
+    </div>
     {{else}}
     <div class="col-md-12 text-center">
         <h2>{{data.message}}</h2>
@@ -44,7 +44,7 @@
     <ul class="list-group">
       {{#if data.items}}
         {{#each data.items}}
-          <a href="/shop/{{this.id}}?category={{../viewingCategory}}" class="list-group-item">{{this.title}}</a>
+<a href="/shop/{{this.id}}?category={{../data.post.Category.id}}" class="list-group-item">{{this.title}}</a>
         {{/each}}
       {{/if}}
     </ul>

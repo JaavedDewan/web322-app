@@ -222,6 +222,7 @@ app.get('/items', (req, res) => {
 });
 
 
+
 app.get('/categories', (req, res) => {
   storeService.getCategories()
     .then((categories) => {
