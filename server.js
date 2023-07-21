@@ -277,7 +277,7 @@ app.get('/categories', (req, res) => {
       price: req.body.price,
       body: req.body.body,
       published: req.body.published === 'on', // Convert the checkbox value to a boolean
-      category: req.body.category // This will hold the selected category ID from the dropdown
+      categoryId: req.body.category // This will hold the selected category ID from the dropdown
     };
   
     // If a file is uploaded in the request, proceed with uploading it to Cloudinary
@@ -326,7 +326,7 @@ app.get('/categories', (req, res) => {
   
     function processItem(imageUrl) {
       req.body.featureImage = imageUrl;
-      req.body.category = itemData.category; // Add the category to the request body
+      req.body.category = itemData.categoryId; // Add the category to the request body
   
       // Process the req.body and add it as a new item in your database
       const newItem = req.body;
