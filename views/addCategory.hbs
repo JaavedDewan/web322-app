@@ -1,13 +1,12 @@
-<div class="row">
-  <div class="col-md-12">
+<!DOCTYPE html>
+<body>
+
     <h2>Add Category</h2>
-    <hr />
-    <form action="/categories/add" method="post">
-      <div class="form-group">
-        <label for="category">Category:</label>
-        <input type="text" class="form-control" name="category" id="category" autofocus required>
-      </div>
-      <button type="submit" class="btn btn-success">Add Category</button>
-    </form>
-  </div>
-</div>
+  <form action="/categories/add" method="post">
+    <label for="category">Category:</label>
+    <input type="text" id="category" name="category" autofocus>
+    <button type="submit">Add Category</button>
+  </form>
+
+</body>
+</html>

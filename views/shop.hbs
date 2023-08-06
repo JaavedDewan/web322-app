@@ -1,40 +1,35 @@
 <div class="row">
   <section class="main col-md-9">
-    {{#if data.post}}
-    <div>
+    <item>
       <div class="row">
         <div class="col-4">
-          <h2>{{data.post.title}}</h2>
+          <h2 class="text-center">{{data.item.title}}</h2>
           <img
-            src="{{data.post.featureImage}}"
+            src="{{data.item.featureImage}}"
             alt="feature Image"
             style="width:100%"
           />
+
         </div>
 
         <div class="col-8"><br />
           <br />
           <div class="row">
             <div class="col-12">
-              {{{safeHTML data.post.body}}}
+              {{data.item.body}}
               <br /><br />
               <strong>Price:</strong>
-              $ {{data.post.price}}<br />
+              $
+              {{data.item.price}}<br />
               <strong>Category:</strong>
-              {{data.post.category}}<br />
+              {{data.item.category}}<br />
               <strong>Last Updated:</strong>
-              {{data.post.postDate}}
+              {{data.item.postDate}}
             </div>
           </div>
         </div>
       </div>
-    </div>
-    {{else}}
-    <div class="col-md-12 text-center">
-        <h2>{{data.message}}</h2>
-        <p>Please try another Post / Category</p>
-    </div>
-    {{/if}}
+    </item>
   </section>
 
   <aside class="col-md-3">
@@ -44,19 +39,20 @@
     <ul class="list-group">
       {{#if data.items}}
         {{#each data.items}}
-<a href="/shop/{{this.id}}?category={{../data.post.Category.id}}" class="list-group-item">{{this.title}}</a>
+          <a
+            class="list-group-item"
+            href="/shop/{{id}}?category={{category}}"
+          >{{title}}</a>
         {{/each}}
       {{/if}}
     </ul>
 
     <h4>Categories</h4>
-
+    {{#each data.categories}}
+      <a class="list-group-item" href="/shop?category={{id}}">{{category}}</a>
+    {{/each}}
     <ul class="list-group">
-      {{#if data.categories}}
-        {{#each data.categories}}
-          <a href="/shop?category={{this.id}}" class="list-group-item">{{this.category}}</a>
-        {{/each}}
-      {{/if}}
+
     </ul>
   </aside>
 </div>
