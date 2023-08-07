@@ -17,6 +17,8 @@ const cloudinary = require('cloudinary').v2
 const streamifier = require('streamifier')
 const upload = multer(); // no { storage: storage }
 const exphbs = require("express-handlebars"); 
+const authData = require('./auth-service');
+const clientSessions = require('client-sessions');
 
 const HTTP_PORT = process.env.PORT || 8080; // Set the port for the HTTP server
 
@@ -74,6 +76,83 @@ app.set("view engine", "hbs"); // Set the view engine to use handlebars
 
 app.use(express.static('public')); // Serve static files from the "public" directory
 
+
+//Client Session
+app.use(clientSessions({
+  cookieName: 'session',          // Cookie name to use for session data
+  secret: 'secret', // Secret used to encrypt session data
+  duration: 24 * 60 * 60 * 1000,   // Session duration (in milliseconds, 1 day in this example)
+  activeDuration: 1000 * 60 * 5    // Active duration (in milliseconds, 5 minutes in this example)
+}));
+
+// Custom middleware to make the session object available in templates
+app.use(function(req, res, next) {
+  res.locals.session = req.session;
+  next();
+});
+
+const ensureLogin = (req, res, next) => {
+  if (!req.session || !req.session.userName) {
+    res.redirect('/login'); // Redirect to the login route if user is not logged in
+  } else {
+    next(); // Continue to the next middleware or route handler
+  }
+};
+
+// Route to render the login view
+app.get('/login', (req, res) => {
+  res.render('login'); // Render the "login" view
+});
+
+// Route to render the register view
+app.get('/register', (req, res) => {
+  res.render('register'); // Render the "register" view
+});
+
+
+// Route to handle user registration
+app.post('/register', (req, res) => {
+  const userData = req.body;
+
+  authData.registerUser(userData)
+    .then(() => {
+      res.render('register', { successMessage: 'User created' });
+    })
+    .catch((err) => {
+      res.render('register', { errorMessage: err, userName: req.body.userName });
+    });
+});
+
+// Route to handle user login
+app.post('/login', (req, res) => {
+  req.body.userAgent = req.get('User-Agent'); // Set User-Agent value in request body
+
+  authData.checkUser(req.body)
+    .then((user) => {
+      req.session.user = {
+        userName: user.userName,
+        email: user.email,
+        loginHistory: user.loginHistory
+      };
+      res.redirect('/items');
+    })
+    .catch((err) => {
+      res.render('login', { errorMessage: err, userName: req.body.userName });
+    });
+});
+
+// Route to handle user logout
+app.get('/logout', (req, res) => {
+  req.session.reset(); // Reset the session
+  res.redirect('/');   // Redirect to the root route
+});
+
+// Route to render the userHistory view
+app.get('/userHistory', ensureLogin, (req, res) => {
+  res.render('userHistory'); // Render the "userHistory" view
+});
+
+
 app.get('/', (req, res) => {
   res.redirect('/shop'); // Redirect the root URL to the /shop route
 });
@@ -82,6 +161,7 @@ app.get('/', (req, res) => {
 app.get('/about', (req, res) => {
   res.render('about'); // Render the "about" view
 });
+
 
 
 app.get("/shop", async (req, res) => {
@@ -178,7 +258,7 @@ app.get('/shop/:id', async (req, res) => {
   res.render("shop", {data: viewData})
 });
 
-app.get('/items', (req, res) => {
+app.get('/items', ensureLogin, (req, res) => {
   const category = req.query.category;
   const minDate = req.query.minDate;
 
@@ -223,7 +303,7 @@ app.get('/items', (req, res) => {
 
 
 
-app.get('/categories', (req, res) => {
+app.get('/categories', ensureLogin, (req, res) => {
   storeService.getCategories()
     .then((categories) => {
       if (categories.length === 0) {
@@ -240,7 +320,7 @@ app.get('/categories', (req, res) => {
 
 
 
-  app.get('/item/:id', (req, res) => {
+  app.get('/item/:id', ensureLogin, (req, res) => {
     const itemId = req.params.id;
   
     storeService.getItemById(itemId)
@@ -257,7 +337,7 @@ app.get('/categories', (req, res) => {
   });
 
 // GET route to render the 'addPost' view with the list of categories
-app.get('/items/add', (req, res) => {
+app.get('/items/add', ensureLogin, (req, res) => {
   storeService.getCategories()
     .then((categories) => {
       res.render('addPost', { categories: categories });
@@ -269,7 +349,7 @@ app.get('/items/add', (req, res) => {
 });
 
 // POST route to handle form submission and process the uploaded file
-app.post('/items/add', upload.single('featureImage'), (req, res) => {
+app.post('/items/add', ensureLogin, upload.single('featureImage'), (req, res) => {
   // When the '/items/add' route is accessed via POST request,
   // handle the form submission and process the uploaded file
 
@@ -340,11 +420,11 @@ app.post('/items/add', upload.single('featureImage'), (req, res) => {
 });
 
 
-  app.get('/categories/add', (req, res) => {
+  app.get('/categories/add', ensureLogin, (req, res) => {
     res.render('addCategory'); // Render the "addcategory" view
   });
   
-  app.post('/categories/add', (req, res) => {
+  app.post('/categories/add', ensureLogin, (req, res) => {
     storeService.addCategory(req.body)
       .then(() => {
         res.redirect('/categories'); // Redirect to /categories after adding the category
@@ -355,7 +435,7 @@ app.post('/items/add', upload.single('featureImage'), (req, res) => {
       });
   });
   
-  app.get('/categories/delete/:id', (req, res) => {
+  app.get('/categories/delete/:id', ensureLogin, (req, res) => {
     const categoryId = req.params.id;
   
     storeService.deleteCategoryById(categoryId)
@@ -368,7 +448,7 @@ app.post('/items/add', upload.single('featureImage'), (req, res) => {
       });
   });
   
-  app.get('/items/delete/:id', (req, res) => {
+  app.get('/items/delete/:id', ensureLogin, (req, res) => {
     const itemId = req.params.id;
     console.log('Deleting item with ID:', itemId);
     storeService.deletePostById(itemId)
@@ -387,6 +467,7 @@ app.use((req, res) => {
 
 
 storeService.initialize()
+.then(authData.initialize)
   .then(() => {
     app.listen(HTTP_PORT, () => {
       console.log("Express http server listening on port " + HTTP_PORT);// Log console if it succeeds
