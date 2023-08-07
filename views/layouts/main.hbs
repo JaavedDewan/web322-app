@@ -21,22 +21,24 @@
 
                 <!-- Collect the nav links, forms, and other content for toggling -->
                 <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="nav navbar-nav navbar-right">
-                        {{#navLink "/items"}}Items{{/navLink}}
-                        {{#navLink "/categories"}}Categories{{/navLink}}
+                    <ul class="navbar-nav">
+
+                        {{#navLink "/Shop"}}Shop{{/navLink}}
+                        {{#navLink "/About"}}About{{/navLink}}
+                        
                     </ul>
                     {{#if session.user}}
                         <form class="navbar-form navbar-right">
-                            <div class="dropdown">
-                                <button class="btn btn-primary dropdown-toggle" type="button" id="userMenu" data-toggle="dropdown">
-                                    <span class="glyphicon glyphicon-user"></span>&nbsp;&nbsp;{{session.user.userName}}&nbsp;&nbsp;<span
-                                        class="caret"></span>
-                                </button>
-                                <ul class="dropdown-menu" aria-labelledby="userMenu">
-                                    <li><a href="/userHistory">User History</a></li>
-                                    <li><a href="/logout">Log Out</a></li>
-                                </ul>
-                            </div>
+<div class="dropdown">
+    <button class="btn btn-primary dropdown-toggle" type="button" id="userMenu" data-bs-toggle="dropdown">
+        <span class="bi bi-person"></span>&nbsp;&nbsp;{{session.user.userName}}&nbsp;&nbsp;<span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu" aria-labelledby="userMenu">
+        <li><a class="dropdown-item" href="/userHistory">User History</a></li>
+        <li><a class="dropdown-item" href="/logout">Log Out</a></li>
+    </ul>
+</div>
+
                         </form>
                         <ul class="nav navbar-nav navbar-right">
                             {{#navLink "/items"}}Items{{/navLink}}
